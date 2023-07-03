@@ -92,8 +92,8 @@ github.com/prometheus/procfs v0.9.0 h1:wzCHvIvM5SxWqYvwgVL7yJY8Lz3PKn49KQtpgMYJf
 github.com/prometheus/procfs v0.9.0/go.mod h1:+pB4zwohETzFnmlpe6yd2lSc+0/46IYZRB/chUwxUZY=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
-github.com/samber/slog-echo v0.2.0 h1:DC2uaBssguDg6ixnMtYzUWI4p3nJUSzl7ioa7xd2OKY=
-github.com/samber/slog-echo v0.2.0/go.mod h1:AMEazSbmtFBJs1JsxaPJQDUzkeb1ygCCNiXfQOmIUNE=
+github.com/samber/slog-echo v0.3.0 h1:vmghWqAzLzARYwBwlYO3xLtl0GPa2PRcj8+/vpxykWI=
+github.com/samber/slog-echo v0.3.0/go.mod h1:AMEazSbmtFBJs1JsxaPJQDUzkeb1ygCCNiXfQOmIUNE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

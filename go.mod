@@ -8,7 +8,7 @@ require (
 	github.com/getkin/kin-openapi v0.118.0
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.10.2
-	github.com/samber/slog-echo v0.2.0
+	github.com/samber/slog-echo v0.3.0
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
 	google.golang.org/grpc v1.56.1
 )
