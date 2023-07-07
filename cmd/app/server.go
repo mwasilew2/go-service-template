@@ -79,7 +79,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	e.GET("/metrics", echoprometheus.NewHandler())
 	e.GET("/debug/*", echo.WrapHandler(http.DefaultServeMux))
 	strictSrv := server_oapi.NewStrictHandler(c, nil)
-	server_oapi.RegisterHandlersWithBaseURL(e, strictSrv, "/api/v1")
+	server_oapi.RegisterHandlersWithBaseURL(e, strictSrv, "/api")
 	g.Add(func() error {
 		c.logger.Debug("starting http server", "HttpAddr", c.HttpAddr)
 		return e.Start(c.HttpAddr)
