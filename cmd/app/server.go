@@ -57,6 +57,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	// start http server
 	e := echo.New()
 	e.HideBanner = true
+	e.HidePort = true
 	e.Use(middleware.Recover())
 	e.Use(slogecho.New(c.logger.With("subcomponent", "echo")))
 	e.Use(echoprometheus.NewMiddleware("echo"))
@@ -81,7 +82,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	strictSrv := server_oapi.NewStrictHandler(c, nil)
 	server_oapi.RegisterHandlersWithBaseURL(e, strictSrv, "/api")
 	g.Add(func() error {
-		c.logger.Debug("starting http server", "HttpAddr", c.HttpAddr)
+		c.logger.Info("starting http server", "address", c.HttpAddr)
 		return e.Start(c.HttpAddr)
 	}, func(err error) {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -103,7 +104,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	srv = grpc.NewServer()
 	server_grpc.RegisterAppServerServer(srv, c)
 	g.Add(func() error {
-		c.logger.Debug("server listening", "address", c.GrpcAddr)
+		c.logger.Info("starting grpc server", "address", c.GrpcAddr)
 		return srv.Serve(lis)
 	}, func(err error) {
 		c.logger.Debug("shutting down grpc server")
