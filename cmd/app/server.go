@@ -25,10 +25,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	componentNameAppServer = "serverCmd"
-)
-
 type serverCmd struct {
 	// cli options
 	HttpAddr string `help:"address which the http server should listen on" default:":8080"`
@@ -42,7 +38,7 @@ type serverCmd struct {
 }
 
 func (c *serverCmd) Run(cmdCtx *cmdContext) error {
-	c.logger = cmdCtx.Logger.With("component", componentNameAppServer)
+	c.logger = cmdCtx.Logger.With("component", "serverCmd")
 
 	// create a run group
 	g := run.Group{}

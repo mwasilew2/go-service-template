@@ -17,10 +17,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	componentNameAppClient = "clientCmd"
-)
-
 type clientCmd struct {
 	// cli options
 	HttpAddr string `help:"address of the http server which the client should connect to" default:":8080"`
@@ -31,7 +27,7 @@ type clientCmd struct {
 }
 
 func (c *clientCmd) Run(cmdCtx *cmdContext) error {
-	c.logger = cmdCtx.Logger.With("component", componentNameAppClient)
+	c.logger = cmdCtx.Logger.With("component", "clientCmd")
 
 	// create a run group
 	g := run.Group{}
