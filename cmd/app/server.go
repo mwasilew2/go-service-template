@@ -96,15 +96,13 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 
 	// start grpc server
 	var srv *grpc.Server
+	lis, err := net.Listen("tcp", c.GrpcAddr)
+	if err != nil {
+		return fmt.Errorf("tcp failed to listen on: %w", err)
+	}
+	srv = grpc.NewServer()
+	server_grpc.RegisterAppServerServer(srv, c)
 	g.Add(func() error {
-		c.logger.Debug("starting grpc server", "GrpcAddr", c.GrpcAddr)
-		lis, err := net.Listen("tcp", c.GrpcAddr)
-		if err != nil {
-			c.logger.Error("failed to listen", "error", err)
-			return fmt.Errorf("tcp failed to listen on: %w", err)
-		}
-		srv = grpc.NewServer()
-		server_grpc.RegisterAppServerServer(srv, c)
 		c.logger.Debug("server listening", "address", c.GrpcAddr)
 		return srv.Serve(lis)
 	}, func(err error) {
