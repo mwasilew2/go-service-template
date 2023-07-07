@@ -29,8 +29,8 @@ const (
 
 type serverCmd struct {
 	// cli options
-	httpAddr string `help:"address which the http server should listen on" default:":8080"`
-	grpcAddr string `help:"address which the grpc server should listen on" default:":8081"`
+	HttpAddr string `help:"address which the http server should listen on" default:":8080"`
+	GrpcAddr string `help:"address which the grpc server should listen on" default:":8081"`
 
 	// Dependencies
 	logger *slog.Logger
@@ -72,8 +72,8 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	strictSrv := server_oapi.NewStrictHandler(c, nil)
 	server_oapi.RegisterHandlers(e, strictSrv)
 	g.Add(func() error {
-		c.logger.Debug("starting http server", "httpAddr", c.httpAddr)
-		return e.Start(c.httpAddr)
+		c.logger.Debug("starting http server", "HttpAddr", c.HttpAddr)
+		return e.Start(c.HttpAddr)
 	}, func(err error) {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
@@ -88,14 +88,14 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	// start grpc server
 	var srv *grpc.Server
 	g.Add(func() error {
-		c.logger.Debug("starting grpc server", "grpcAddr", c.grpcAddr)
-		lis, err := net.Listen("tcp", c.grpcAddr)
+		c.logger.Debug("starting grpc server", "GrpcAddr", c.GrpcAddr)
+		lis, err := net.Listen("tcp", c.GrpcAddr)
 		if err != nil {
 			return fmt.Errorf("tcp failed to listen on: %w", err)
 		}
 		srv = grpc.NewServer()
 		server_grpc.RegisterAppServerServer(srv, c)
-		c.logger.Debug("server listening", "address", c.grpcAddr)
+		c.logger.Debug("server listening", "address", c.GrpcAddr)
 		return srv.Serve(lis)
 	}, func(err error) {
 		c.logger.Debug("shutting down grpc server")
