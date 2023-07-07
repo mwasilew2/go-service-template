@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	_ "net/http/pprof"
+
 	"golang.org/x/exp/slog"
 
 	oapi_middleware "github.com/deepmap/oapi-codegen/pkg/middleware"
