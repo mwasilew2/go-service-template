@@ -37,6 +37,17 @@ type serverCmd struct {
 	server_grpc.UnimplementedAppServerServer
 }
 
+func (c *serverCmd) PostV1Message(ctx context.Context, request server_oapi.PostV1MessageRequestObject) (server_oapi.PostV1MessageResponseObject, error) {
+	return nil, nil
+}
+
+func (c *serverCmd) GetV1MessageId(ctx context.Context, request server_oapi.GetV1MessageIdRequestObject) (server_oapi.GetV1MessageIdResponseObject, error) {
+	return server_oapi.GetV1MessageId200JSONResponse{
+		Id:      2,
+		Message: "Hello World!",
+	}, nil
+}
+
 func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	c.logger = cmdCtx.Logger.With("component", "serverCmd")
 
@@ -68,7 +79,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	e.GET("/metrics", echoprometheus.NewHandler())
 	e.GET("/debug/*", echo.WrapHandler(http.DefaultServeMux))
 	strictSrv := server_oapi.NewStrictHandler(c, nil)
-	server_oapi.RegisterHandlers(e, strictSrv)
+	server_oapi.RegisterHandlersWithBaseURL(e, strictSrv, "/api/v1")
 	g.Add(func() error {
 		c.logger.Debug("starting http server", "HttpAddr", c.HttpAddr)
 		return e.Start(c.HttpAddr)
@@ -89,6 +100,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 		c.logger.Debug("starting grpc server", "GrpcAddr", c.GrpcAddr)
 		lis, err := net.Listen("tcp", c.GrpcAddr)
 		if err != nil {
+			c.logger.Error("failed to listen", "error", err)
 			return fmt.Errorf("tcp failed to listen on: %w", err)
 		}
 		srv = grpc.NewServer()
