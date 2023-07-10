@@ -6,6 +6,7 @@ import (
 	"golang.org/x/exp/slog"
 
 	"github.com/alecthomas/kong"
+	"github.com/mwasilew2/go-service-template/cmd/app/version"
 )
 
 var programLevel = new(slog.LevelVar)
@@ -14,8 +15,13 @@ type cmdContext struct {
 	Logger *slog.Logger
 }
 
+type Globals struct {
+	LogLevel int                 `short:"l" help:"Log level: 0 (debug), 1 (info), 2 (warn), 3 (error)" default:"1"`
+	Version  version.VersionFlag `short:"v" name:"version" help:"Print version information and quit"`
+}
+
 var kongApp struct {
-	LogLevel int `short:"l" help:"Log level: 0 (debug), 1 (info), 2 (warn), 3 (error)" default:"1"`
+	Globals
 
 	Server serverCmd `cmd:"" help:"Start the app server."`
 	Client clientCmd `cmd:"" help:"Start the app client."`
@@ -28,11 +34,8 @@ func main() {
 	kongCtx := kong.Parse(&kongApp,
 		kong.Description("A simple application."),
 		kong.UsageOnError(),
-		kong.Vars{
-			"version": "0.0.1",
-		},
 	)
-	switch kongApp.LogLevel {
+	switch kongApp.Globals.LogLevel {
 	case 0:
 		programLevel.Set(slog.LevelDebug)
 	case 1:
