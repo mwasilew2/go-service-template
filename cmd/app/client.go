@@ -62,11 +62,11 @@ func (c *clientCmd) Run(cmdCtx *cmdContext) error {
 		close(errChan)
 	})
 
-	// initialize a grpc client
+	// initialize a grpc client stub
 	var err error
 	conn, err := grpc.Dial(c.GrpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return fmt.Errorf("failed to dial server: %w", err)
+		return fmt.Errorf("failed to initialize client stub: %w", err)
 	}
 	defer conn.Close()
 	pbClient := server_grpc.NewAppServerClient(conn)
