@@ -19,8 +19,8 @@ import (
 
 type clientCmd struct {
 	// cli options
-	HttpAddr string `help:"address of the http server which the client should connect to" default:":8080"`
-	GrpcAddr string `help:"address of the grpc server which the client should connect to" default:":8081"`
+	HttpAddr string `help:"address of the http server which the client should connect to" default:":8080" env:"HTTP_ADDR"`
+	GrpcAddr string `help:"address of the grpc server which the client should connect to" default:":8081" env:"GRPC_ADDR"`
 
 	// Dependencies
 	logger *slog.Logger

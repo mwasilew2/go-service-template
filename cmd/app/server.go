@@ -27,8 +27,9 @@ import (
 
 type serverCmd struct {
 	// cli options
-	HttpAddr string `help:"address which the http server should listen on" default:":8080"`
-	GrpcAddr string `help:"address which the grpc server should listen on" default:":8081"`
+	HttpAddr  string `help:"address which the http server should listen on" default:":8080" env:"HTTP_ADDR"`
+	HttpDebug bool   `help:"enable debug messages in the http server responses" default:"false" env:"HTTP_DEBUG"`
+	GrpcAddr  string `help:"address which the grpc server should listen on" default:":8081" env:"GRPC_ADDR"`
 
 	// Dependencies
 	logger *slog.Logger
@@ -54,13 +55,20 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	// create a run group
 	g := run.Group{}
 
-	// start http server
+	// initialize the http server
 	e := echo.New()
+	e.Debug = c.HttpDebug
 	e.HideBanner = true
 	e.HidePort = true
-	e.Use(middleware.Recover())
 	e.Use(slogecho.New(c.logger.With("subcomponent", "echo")))
 	e.Use(echoprometheus.NewMiddleware("echo"))
+	e.Use(middleware.Recover())
+
+	// admin routes
+	e.GET("/metrics", echoprometheus.NewHandler())
+	e.GET("/debug/*", echo.WrapHandler(http.DefaultServeMux))
+
+	// oapi routes
 	swagger, err := server_oapi.GetSwagger()
 	if err != nil {
 		return fmt.Errorf("failed to get swagger: %w", err)
@@ -77,10 +85,10 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 			return false
 		},
 	}))
-	e.GET("/metrics", echoprometheus.NewHandler())
-	e.GET("/debug/*", echo.WrapHandler(http.DefaultServeMux))
 	strictSrv := server_oapi.NewStrictHandler(c, nil)
 	server_oapi.RegisterHandlersWithBaseURL(e, strictSrv, "/api")
+
+	// start the http server
 	g.Add(func() error {
 		c.logger.Info("starting http server", "address", c.HttpAddr)
 		return e.Start(c.HttpAddr)
@@ -95,7 +103,7 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 		c.logger.Debug("http server stopped")
 	})
 
-	// start grpc server
+	// initialize the grpc server
 	var srv *grpc.Server
 	lis, err := net.Listen("tcp", c.GrpcAddr)
 	if err != nil {
@@ -103,6 +111,8 @@ func (c *serverCmd) Run(cmdCtx *cmdContext) error {
 	}
 	srv = grpc.NewServer()
 	server_grpc.RegisterAppServerServer(srv, c)
+
+	// start the grpc server
 	g.Add(func() error {
 		c.logger.Info("starting grpc server", "address", c.GrpcAddr)
 		return srv.Serve(lis)
